@@ -45,9 +45,9 @@ python run.py evaluate-sl --config configs/supervised.yaml --checkpoint checkpoi
 
 python run.py train-global --config configs/rl_global.yaml --checkpoint checkpoints/supervised/model.pt --device cuda:0 --batch-size 64 --episodes 4000 --docking-workers 16 --seed 2026
 
-单靶点强化学习 **（外加靶点的训练？？？）**
+单靶点强化学习（序列）
 
-python run.py train-target --config configs/rl_target.yaml --checkpoint checkpoints/global/model.pt --target-id 2009 --device cuda:0 --batch-size 64 --episodes 30 --docking-workers 16 --seed 2026
+python run.py train-target --config configs/rl_target.yaml --checkpoint checkpoints/global/model.pt --sequence xxx --receptor xxx.pdbqt --box a b c --device cuda:0 --esm2-device cuda:0 --batch-size 64 --episodes 1000 --docking-workers 16 --seed 2026
 
 
 **单靶点生成**
