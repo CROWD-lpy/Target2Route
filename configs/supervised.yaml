@@ -1,0 +1,47 @@
+device: cuda：0
+seed: 42
+save_top_k: 3
+log_interval: 100
+num_workers: 4
+max_batches: null
+
+train_dataset_path: data/supervised/train.pkl
+valid_dataset_path: data/supervised/valid.pkl
+test_dataset_path: data/supervised/test.pkl
+target_embedding_path: data/supervised/seqs_embeddings.pt
+template_csv_path: data/templates/trace_core_templates_top90_update.csv
+fp_index_path: data/building_blocks/zinc_ECFP4_2048_faiss_ivfpq.index
+smi_list_path: data/building_blocks/zinc_ECFP4_2048_smiles_dict.pkl
+fp_pos_weights: data/supervised/fp_pos_weights.pt  # Used only when training from scratch.
+
+esm2_model: facebook/esm2_t33_650M_UR50D
+esm2_revision: 08e4846e537177426273712802403f7ba8261b6c
+esm2_max_length: 1024
+esm2_centering: auto
+esm2_mean_path: null
+esm2_cache_dir: cache/esm2
+esm2_device: null
+
+num_templates: 2277
+max_seq_len: 15
+esm2_dim: 1280
+pocket_dim: 0
+test_try: 5
+
+num_epoch: 30
+lr: 0.0001
+batch_size: 128
+weight_decay: 0.0001
+loss_ratio: [1.0, 1.0, 1000.0]
+
+fp_type: ECFP4
+fp_dim: 2048
+num_layers: 8
+hidden_size: 512
+num_heads: 8
+dropout: 0.1
+
+fp_head: diffusion
+diffusion_steps: 100
+diffusion_s: 0.008
+num_timestep_samples: 32

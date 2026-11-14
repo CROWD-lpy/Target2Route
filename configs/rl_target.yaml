@@ -1,0 +1,23 @@
+target_choose_list: null
+target_id: null
+target_sequence: null
+
+num_episodes: 1000
+temperature: 1.2
+emb_mse_coef: 0.01
+penalty_reward: -2.0
+
+use_historical_penalty: true
+per_target_buffer_size: 1000
+sim_threshold: 0.75
+max_discount_ratio: 0.8
+
+hard_min_qed: 0.3
+hard_min_logp: 1.0
+hard_max_logp: 4.5
+hard_min_mw: 150
+hard_max_mw: 550
+hard_max_hydrogen_donor: 3
+hard_max_hydrogen_acceptor: 9
+hard_max_nrotb: 8
+hard_max_tpsa: 130
