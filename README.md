@@ -4,8 +4,6 @@ Target2Route generates molecules and their synthesis routes for a specified prot
 
 [Data and checkpoints](#data-and-checkpoints) · [Checkpoint verification](#checkpoint-verification) · [Training and evaluation](#training-and-evaluation) · [Single-target generation](#single-target-generation)
 
-*Full documentation is coming soon.*
-
 ## Data and checkpoints
 
 Download the complete `data/` and `checkpoints/` directories and place both in the repository root, alongside `run.py`. [Target2Route on Hugging Face](https://huggingface.co/CROWD-lpy/Target2Route)
