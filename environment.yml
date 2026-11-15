@@ -1,0 +1,27 @@
+name: T2R_py311
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - transformers
+  - pandas
+  - meeko
+  - rdkit
+  - numpy[version='<2']
+  - biopython
+  - pytorch=2.5.1
+  - cuda-cudart
+  - seaborn
+  - cuda
+  - tqdm
+  - jupyter
+  - tensorboard
+  - vina
+  - openbabel
+  - scikit-learn
+  - fair-esm
+  - torch-geometric
+  - torch-scatter
+  - faiss-gpu
+  - openpyxl
+prefix: /home/liangpengyu_cluster/anaconda3/envs/TRACE_py311
