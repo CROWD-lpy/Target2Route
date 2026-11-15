@@ -1,4 +1,4 @@
-# Target2Route
+# Target-to-Route: De Novo Ligand Design Conditioned on Targets through Direct Synthetic Route Generation
 
 ![Target2Route generates molecules and their synthesis routes for a specified protein target.](./src/T2R_TOC.png)
 
