@@ -6,7 +6,7 @@ This README.md is coming soon...
 
 https://huggingface.co/CROWD-lpy/Target2Route
 
-请将checkpoints完整下载，并放在主目录下
+请将data和checkpoints完整下载，并放在主目录下
 
 **测试检查点可用性**
 
