@@ -1,6 +1,6 @@
 # Target2Route
 
-![Target2Route generates molecules and their synthesis routes for a specified protein target.](./src/TOC.tif)
+![Target2Route generates molecules and their synthesis routes for a specified protein target.](./src/TOC.png)
 
 [Data and checkpoints](#data-and-checkpoints) · [Checkpoint verification](#checkpoint-verification) · [Training and evaluation](#training-and-evaluation) · [Single-target generation](#single-target-generation)
 
