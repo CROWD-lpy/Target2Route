@@ -1,72 +1,170 @@
 # Target2Route
 
-This README.md is coming soon...
+Target2Route generates molecules and their synthesis routes for a specified protein target.
 
-**检查点文件**
+[Data and checkpoints](#data-and-checkpoints) · [Checkpoint verification](#checkpoint-verification) · [Training and evaluation](#training-and-evaluation) · [Single-target generation](#single-target-generation)
 
-https://huggingface.co/CROWD-lpy/Target2Route
+*Full documentation is coming soon.*
 
-请将data和checkpoints完整下载，并放在主目录下
+## Data and checkpoints
 
-**测试检查点可用性**
+Download the complete `data/` and `checkpoints/` directories and place both in the repository root, alongside `run.py`. [Target2Route on Hugging Face](https://huggingface.co/CROWD-lpy/Target2Route)
 
-预训练监督学习检查点
+Run the commands below from the repository root.
 
-python run.py check-checkpoint --config configs/supervised.yaml --checkpoint checkpoints/supervised/model.pt
+## Checkpoint verification
 
-全局强化学习检查点
+### Supervised checkpoint
 
-python run.py check-checkpoint --config configs/rl_global.yaml --checkpoint checkpoints/global/model.pt
+```bash
+python run.py check-checkpoint \
+  --config configs/supervised.yaml \
+  --checkpoint checkpoints/supervised/model.pt
+```
 
-单靶点强化学习检查点
+### Global reinforcement learning checkpoint
 
-python run.py check-checkpoint --config configs/rl_target.yaml --checkpoint checkpoints/target/HPK1/model.pt
+```bash
+python run.py check-checkpoint \
+  --config configs/rl_global.yaml \
+  --checkpoint checkpoints/global/model.pt
+```
 
-python run.py check-checkpoint --config configs/rl_target.yaml --checkpoint checkpoints/target/RIPK1/model.pt
+### Target-specific checkpoints
 
-python run.py check-checkpoint --config configs/rl_target.yaml --checkpoint checkpoints/target/LRRK2/model.pt
+```bash
+python run.py check-checkpoint \
+  --config configs/rl_target.yaml \
+  --checkpoint checkpoints/target/HPK1/model.pt
 
+python run.py check-checkpoint \
+  --config configs/rl_target.yaml \
+  --checkpoint checkpoints/target/RIPK1/model.pt
 
-**训练和评估**
+python run.py check-checkpoint \
+  --config configs/rl_target.yaml \
+  --checkpoint checkpoints/target/LRRK2/model.pt
+```
 
-预训练监督学习从头训练 (--max-batches 200 限制训练集数量)
+## Training and evaluation
 
-python run.py train-sl --config configs/supervised.yaml --device cuda:0 --batch-size 64 --epochs 30 --seed 2026
+### Supervised pretraining
 
-预训练监督学习续算 (可使用--max-batches 300 限制训练集数量;  --epoch为累计总epoch数)
+Add `--max-batches 200` for a short run of up to 200 batches per data pass.
 
-python run.py train-sl --model-config runs/supervised/xxxx/config.yaml --resume runs/supervised/xxxx/ckpt/xxxx.pt  --epochs 40  --device cuda:0
+```bash
+python run.py train-sl \
+  --config configs/supervised.yaml \
+  --device cuda:0 --batch-size 64 --epochs 30 --seed 2026
+```
 
-预训练监督学习检查点评估
+### Resume supervised training
 
-python run.py evaluate-sl --config configs/supervised.yaml --checkpoint checkpoints/supervised/model.pt --split test --device cuda:0 --batch-size 32 --max-batches 50 --seed 2026
+Replace `xxxx` in the paths with your run directory and checkpoint filename. Set `--epochs` to the total number of epochs to reach. Add `--max-batches 300` to cap each data pass at 300 batches.
 
-全局强化学习
+```bash
+python run.py train-sl \
+  --model-config runs/supervised/xxxx/config.yaml \
+  --resume runs/supervised/xxxx/ckpt/xxxx.pt \
+  --epochs 40 --device cuda:0
+```
 
-python run.py train-global --config configs/rl_global.yaml --checkpoint checkpoints/supervised/model.pt --device cuda:0 --batch-size 64 --episodes 4000 --docking-workers 16 --seed 2026
+### Evaluate the supervised checkpoint
 
-单靶点微调（序列）
+```bash
+python run.py evaluate-sl \
+  --config configs/supervised.yaml \
+  --checkpoint checkpoints/supervised/model.pt \
+  --split test --device cuda:0 --batch-size 32 --max-batches 50 --seed 2026
+```
 
-python run.py train-target --config configs/rl_target.yaml --checkpoint checkpoints/global/model.pt --sequence xxx --receptor xxx.pdbqt --box a b c --device cuda:0 --esm2-device cuda:0 --batch-size 64 --episodes 1000 --docking-workers 16 --seed 2026
+### Global reinforcement learning
 
-单靶点微调（fasta）
+```bash
+python run.py train-global \
+  --config configs/rl_global.yaml \
+  --checkpoint checkpoints/supervised/model.pt \
+  --device cuda:0 --batch-size 64 --episodes 4000 --docking-workers 16 --seed 2026
+```
 
-python run.py train-target --config configs/rl_target.yaml --checkpoint checkpoints/global/model.pt --fasta xxx.fasta --receptor xxx.pdbqt --box a b c --device cuda:0 --esm2-device cuda:0 --batch-size 64 --episodes 1000 --docking-workers 16 --seed 2026
+### Target-specific fine-tuning
 
-**单靶点生成**
+Supply the target's amino acid sequence with `--sequence` or its single-record FASTA file with `--fasta`. Replace `xxx.pdbqt` with the prepared receptor file and `a b c` with three numeric coordinates for the docking box center in Å.
 
-序列生成
+#### From a protein sequence
 
-python run.py generate --config configs/rl_target.yaml --checkpoint checkpoints/target/xxx/model.pt  --sequence xxx --no-docking --num-mols 100 --batch-size 64 --max-batches 100 --device cuda:0 --esm2-device cuda:0 --seed 2026 --output-dir runs/generation/xxx
+```bash
+python run.py train-target \
+  --config configs/rl_target.yaml \
+  --checkpoint checkpoints/global/model.pt \
+  --sequence xxx --receptor xxx.pdbqt --box a b c \
+  --device cuda:0 --esm2-device cuda:0 \
+  --batch-size 64 --episodes 1000 --docking-workers 16 --seed 2026
+```
 
-序列生成+对接
+#### From a FASTA file
 
-python run.py generate --config configs/rl_target.yaml --checkpoint checkpoints/target/xxx/model.pt --sequence xxx --receptor xxx.pdbqt --box a b c --num-mols 20 --batch-size 64 --max-batches 100 --device cuda:0 --esm2-device cuda:0 --seed 2026 --output-dir runs/generation/xxx
+```bash
+python run.py train-target \
+  --config configs/rl_target.yaml \
+  --checkpoint checkpoints/global/model.pt \
+  --fasta xxx.fasta --receptor xxx.pdbqt --box a b c \
+  --device cuda:0 --esm2-device cuda:0 \
+  --batch-size 64 --episodes 1000 --docking-workers 16 --seed 2026
+```
 
-fasta生成
+## Single-target generation
 
-python run.py generate --config configs/rl_target.yaml --checkpoint checkpoints/target/xxx/model.pt --fasta xxx.fasta --no-docking --num-mols 20 --batch-size 64 --max-batches 100 --device cuda:0 --esm2-device cuda:0 --seed 2026 --output-dir runs/generation/xxx
+Use the checkpoint for your target. Replace the sequence, FASTA, and docking placeholders with your inputs. Choose a new `--output-dir` for each run.
 
-fasta生成+对接
+### From a protein sequence
 
-python run.py generate --config configs/rl_target.yaml --checkpoint checkpoints/target/xxx/model.pt --fasta xxx.fasta --receptor xxx.pdbqt --box a b c --num-mols 20 --batch-size 64 --max-batches 100 --device cuda:0 --esm2-device cuda:0 --seed 2026 --output-dir runs/generation/xxx
+#### Without docking
+
+```bash
+python run.py generate \
+  --config configs/rl_target.yaml \
+  --checkpoint checkpoints/target/xxx/model.pt \
+  --sequence xxx --no-docking \
+  --num-mols 100 --batch-size 64 --max-batches 100 \
+  --device cuda:0 --esm2-device cuda:0 --seed 2026 \
+  --output-dir runs/generation/xxx
+```
+
+#### With docking
+
+```bash
+python run.py generate \
+  --config configs/rl_target.yaml \
+  --checkpoint checkpoints/target/xxx/model.pt \
+  --sequence xxx --receptor xxx.pdbqt --box a b c \
+  --num-mols 20 --batch-size 64 --max-batches 100 \
+  --device cuda:0 --esm2-device cuda:0 --seed 2026 \
+  --output-dir runs/generation/xxx
+```
+
+### From a FASTA file
+
+#### Without docking
+
+```bash
+python run.py generate \
+  --config configs/rl_target.yaml \
+  --checkpoint checkpoints/target/xxx/model.pt \
+  --fasta xxx.fasta --no-docking \
+  --num-mols 20 --batch-size 64 --max-batches 100 \
+  --device cuda:0 --esm2-device cuda:0 --seed 2026 \
+  --output-dir runs/generation/xxx
+```
+
+#### With docking
+
+```bash
+python run.py generate \
+  --config configs/rl_target.yaml \
+  --checkpoint checkpoints/target/xxx/model.pt \
+  --fasta xxx.fasta --receptor xxx.pdbqt --box a b c \
+  --num-mols 20 --batch-size 64 --max-batches 100 \
+  --device cuda:0 --esm2-device cuda:0 --seed 2026 \
+  --output-dir runs/generation/xxx
+```
